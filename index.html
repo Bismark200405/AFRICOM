@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcomBuilder - Créez votre boutique en ligne en minutes</title>
+    <title>Africom - Créez votre boutique en ligne en minutes</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +19,7 @@
 
         /* Header */
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
             color: white;
             padding: 1rem 0;
             position: fixed;
@@ -39,8 +39,13 @@
         }
 
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: bold;
+        }
+
+        .logo::before {
+            content: "🌍";
+            margin-right: 0.5rem;
         }
 
         .nav-links {
@@ -53,6 +58,7 @@
             color: white;
             text-decoration: none;
             transition: opacity 0.3s;
+            font-weight: 500;
         }
 
         .nav-links a:hover {
@@ -60,7 +66,7 @@
         }
 
         .cta-button {
-            background: #ff6b6b;
+            background: #2E7D32;
             color: white;
             padding: 0.7rem 1.5rem;
             border: none;
@@ -73,12 +79,12 @@
 
         .cta-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255,107,107,0.4);
+            box-shadow: 0 5px 15px rgba(46,125,50,0.4);
         }
 
         /* Hero Section */
         .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
             color: white;
             text-align: center;
             padding: 120px 2rem 80px;
@@ -98,6 +104,29 @@
             animation: fadeInUp 1s ease 0.2s both;
         }
 
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
         .hero-buttons {
             display: flex;
             gap: 1rem;
@@ -107,7 +136,7 @@
         }
 
         .btn-primary {
-            background: #ff6b6b;
+            background: #2E7D32;
             color: white;
             padding: 1rem 2rem;
             border: none;
@@ -151,8 +180,18 @@
         .section-title {
             text-align: center;
             font-size: 2.5rem;
-            margin-bottom: 3rem;
+            margin-bottom: 1rem;
             color: #333;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .features-grid {
@@ -169,6 +208,7 @@
             text-align: center;
             box-shadow: 0 5px 20px rgba(0,0,0,0.1);
             transition: transform 0.3s;
+            border-top: 4px solid #FF6B35;
         }
 
         .feature-card:hover {
@@ -186,6 +226,28 @@
             color: #333;
         }
 
+        /* Market Focus */
+        .market-focus {
+            padding: 80px 2rem;
+            background: linear-gradient(135deg, #2E7D32 0%, #388E3C 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .market-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 800px;
+            margin: 3rem auto;
+        }
+
+        .market-stat {
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
         /* Pricing Section */
         .pricing {
             padding: 80px 2rem;
@@ -194,9 +256,9 @@
 
         .pricing-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
-            max-width: 900px;
+            max-width: 1000px;
             margin: 3rem auto 0;
         }
 
@@ -211,17 +273,17 @@
         }
 
         .pricing-card.popular {
-            border-color: #667eea;
+            border-color: #FF6B35;
             transform: scale(1.05);
         }
 
         .pricing-card.popular::before {
-            content: "POPULAIRE";
+            content: "RECOMMANDÉ";
             position: absolute;
             top: -10px;
             left: 50%;
             transform: translateX(-50%);
-            background: #667eea;
+            background: #FF6B35;
             color: white;
             padding: 0.5rem 1rem;
             border-radius: 15px;
@@ -232,7 +294,7 @@
         .price {
             font-size: 2.5rem;
             font-weight: bold;
-            color: #333;
+            color: #FF6B35;
         }
 
         .price-period {
@@ -240,12 +302,47 @@
             font-size: 1rem;
         }
 
+        .price-subtitle {
+            color: #666;
+            margin: 1rem 0;
+            font-style: italic;
+        }
+
         /* Footer */
         .footer {
             background: #333;
             color: white;
             text-align: center;
-            padding: 2rem;
+            padding: 3rem 2rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            color: #FF6B35;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section a {
+            color: #ccc;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: #FF6B35;
         }
 
         /* Animations */
@@ -278,6 +375,14 @@
             .nav-links {
                 display: none;
             }
+
+            .hero-stats {
+                gap: 1rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
         }
 
         /* Progress Bar */
@@ -293,7 +398,7 @@
 
         .progress-bar {
             height: 4px;
-            background: #ff6b6b;
+            background: #2E7D32;
             width: 0%;
             transition: width 0.3s;
         }
@@ -308,60 +413,106 @@
     <!-- Header -->
     <header class="header">
         <nav class="nav">
-            <div class="logo">🚀 EcomBuilder</div>
+            <div class="logo">Africom</div>
             <ul class="nav-links">
                 <li><a href="#features">Fonctionnalités</a></li>
                 <li><a href="#pricing">Tarifs</a></li>
                 <li><a href="#contact">Contact</a></li>
+                <li><a href="#about">À Propos</a></li>
             </ul>
-            <a href="#" class="cta-button" onclick="showAlert('Inscription')">Démarrer Gratuitement</a>
+            <a href="#" class="cta-button" onclick="showSignupForm()">Démarrer Maintenant</a>
         </nav>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
-        <h1>Créez votre boutique en ligne<br>en quelques clics ⚡</h1>
-        <p>Le builder e-commerce le plus simple et puissant pour entrepreneurs ambitieux</p>
+        <h1>Lancez votre business en ligne<br>en 30 minutes ⚡</h1>
+        <p>La plateforme e-commerce pensée pour tous les entrepreneurs qui veulent réussir</p>
+        
+        <div class="hero-stats">
+            <div class="stat">
+                <span class="stat-number">10K+</span>
+                <span class="stat-label">Boutiques créées</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">2M€</span>
+                <span class="stat-label">Chiffre d'affaires généré</span>
+            </div>
+            <div class="stat">
+                <span class="stat-number">30min</span>
+                <span class="stat-label">Pour être en ligne</span>
+            </div>
+        </div>
+
         <div class="hero-buttons">
-            <a href="#" class="btn-primary" onclick="showAlert('Essai gratuit démarré!')">Essai Gratuit 14 jours</a>
+            <a href="#" class="btn-primary" onclick="showSignupForm()">Créer Ma Boutique Gratuite</a>
             <a href="#" class="btn-secondary" onclick="showDemo()">Voir la Démo</a>
+        </div>
+    </section>
+
+    <!-- Market Focus -->
+    <section class="market-focus">
+        <div class="container">
+            <h2>Conçu pour Tous les Entrepreneurs</h2>
+            <p>Que vous vendiez des produits physiques, digitaux ou des services, Africom s'adapte à votre business</p>
+            
+            <div class="market-stats">
+                <div class="market-stat">
+                    <h3>🛍️ E-commerce</h3>
+                    <p>Boutiques traditionnelles</p>
+                </div>
+                <div class="market-stat">
+                    <h3>🍕 Restauration</h3>
+                    <p>Commande & livraison</p>
+                </div>
+                <div class="market-stat">
+                    <h3>🎨 Créateurs</h3>
+                    <p>Art, artisanat, design</p>
+                </div>
+                <div class="market-stat">
+                    <h3>💼 Services</h3>
+                    <p>Consultants, coaches</p>
+                </div>
+            </div>
         </div>
     </section>
 
     <!-- Features Section -->
     <section class="features" id="features">
         <div class="container">
-            <h2 class="section-title">Pourquoi Choisir EcomBuilder ?</h2>
+            <h2 class="section-title">Tout Ce Dont Vous Avez Besoin</h2>
+            <p class="section-subtitle">Une solution complète pour transformer vos visiteurs en clients fidèles</p>
+            
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">🎨</div>
-                    <h3>Design Professionnel</h3>
-                    <p>Templates modernes et personnalisables pour créer un site qui vous ressemble</p>
+                    <h3>Templates Professionnels</h3>
+                    <p>Plus de 50 designs modernes, optimisés pour la conversion et entièrement personnalisables</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">⚡</div>
-                    <h3>Ultra Rapide</h3>
-                    <p>Votre boutique en ligne prête en moins de 30 minutes, sans compétences techniques</p>
+                    <h3>Création Ultra-Rapide</h3>
+                    <p>De zéro à une boutique complète en 30 minutes. Pas de code, que du résultat</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">💳</div>
                     <h3>Paiements Sécurisés</h3>
-                    <p>Intégration Stripe et PayPal incluse pour accepter tous les moyens de paiement</p>
+                    <p>Stripe, PayPal, virement... Acceptez tous les moyens de paiement en un clic</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">📱</div>
-                    <h3>Mobile First</h3>
-                    <p>Tous nos templates sont optimisés mobile pour convertir sur tous les appareils</p>
+                    <h3>100% Mobile</h3>
+                    <p>Vos clients achètent sur mobile ? Parfait ! Tous nos sites sont optimisés mobile-first</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">📊</div>
-                    <h3>Analytics Avancées</h3>
-                    <p>Suivez vos ventes, visiteurs et performance avec des tableaux de bord intuitifs</p>
+                    <h3>Analytics Puissantes</h3>
+                    <p>Suivez vos ventes, analysez vos clients et optimisez vos performances</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🔧</div>
-                    <h3>Support Expert</h3>
-                    <p>Notre équipe vous accompagne dans votre réussite e-commerce 24/7</p>
+                    <div class="feature-icon">🚀</div>
+                    <h3>Support Premium</h3>
+                    <p>Notre équipe vous accompagne dans votre réussite. Chat, email, téléphone</p>
                 </div>
             </div>
         </div>
@@ -370,53 +521,99 @@
     <!-- Pricing Section -->
     <section class="pricing" id="pricing">
         <div class="container">
-            <h2 class="section-title">Tarifs Transparents</h2>
+            <h2 class="section-title">Des Prix Qui Ont Du Sens</h2>
+            <p class="section-subtitle">Commencez gratuitement, payez seulement quand vous vendez</p>
+            
             <div class="pricing-grid">
                 <div class="pricing-card">
                     <h3>Starter</h3>
                     <div class="price">0€<span class="price-period">/mois</span></div>
+                    <p class="price-subtitle">Parfait pour tester</p>
                     <ul style="text-align: left; margin: 2rem 0;">
                         <li>✅ 1 boutique</li>
                         <li>✅ 10 produits max</li>
-                        <li>✅ Templates de base</li>
+                        <li>✅ 5 templates</li>
+                        <li>✅ Paiements sécurisés</li>
                         <li>✅ Support email</li>
+                        <li>⚠️ Logo Africom</li>
                     </ul>
-                    <a href="#" class="btn-primary" onclick="showAlert('Plan Starter sélectionné!')">Commencer</a>
+                    <a href="#" class="btn-primary" onclick="selectPlan('starter')">Commencer Gratuit</a>
                 </div>
                 
                 <div class="pricing-card popular">
                     <h3>Business</h3>
                     <div class="price">29€<span class="price-period">/mois</span></div>
+                    <p class="price-subtitle">Pour entrepreneurs sérieux</p>
                     <ul style="text-align: left; margin: 2rem 0;">
-                        <li>✅ 5 boutiques</li>
+                        <li>✅ 3 boutiques</li>
                         <li>✅ Produits illimités</li>
                         <li>✅ Tous les templates</li>
+                        <li>✅ Sans logo Africom</li>
                         <li>✅ Analytics avancées</li>
                         <li>✅ Support prioritaire</li>
+                        <li>✅ Domaine personnalisé</li>
                     </ul>
-                    <a href="#" class="btn-primary" onclick="showAlert('Plan Business sélectionné!')">Choisir Business</a>
+                    <a href="#" class="btn-primary" onclick="selectPlan('business')">Choisir Business</a>
                 </div>
                 
                 <div class="pricing-card">
                     <h3>Enterprise</h3>
                     <div class="price">99€<span class="price-period">/mois</span></div>
+                    <p class="price-subtitle">Pour agences & grandes entreprises</p>
                     <ul style="text-align: left; margin: 2rem 0;">
                         <li>✅ Boutiques illimitées</li>
-                        <li>✅ Whitelabel</li>
+                        <li>✅ White-label complet</li>
                         <li>✅ API personnalisée</li>
-                        <li>✅ Account manager dédié</li>
+                        <li>✅ Manager dédié</li>
+                        <li>✅ Formation équipe</li>
+                        <li>✅ SLA garantie</li>
                     </ul>
-                    <a href="#" class="btn-primary" onclick="showAlert('Plan Enterprise sélectionné!')">Contact Commercial</a>
+                    <a href="#" class="btn-primary" onclick="selectPlan('enterprise')">Contact Commercial</a>
                 </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem; color: #666;">
+                <p>💳 <strong>Pas de frais cachés</strong> • 🔒 <strong>Annulation à tout moment</strong> • 🎯 <strong>Support inclus</strong></p>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
     <footer class="footer" id="contact">
-        <div class="container">
-            <p>&copy; 2024 EcomBuilder - Votre partenaire e-commerce de confiance</p>
-            <p>📧 contact@ecombuilder.com | 📞 01 23 45 67 89</p>
+        <div class="footer-content">
+            <div class="footer-links">
+                <div class="footer-section">
+                    <h4>Produit</h4>
+                    <a href="#">Fonctionnalités</a>
+                    <a href="#">Templates</a>
+                    <a href="#">Intégrations</a>
+                    <a href="#">API</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <a href="#">Centre d'aide</a>
+                    <a href="#">Tutoriels</a>
+                    <a href="#">Communauté</a>
+                    <a href="#">Status</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Entreprise</h4>
+                    <a href="#">À propos</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Carrières</a>
+                    <a href="#">Presse</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <a href="mailto:hello@africom.com">📧 hello@africom.com</a>
+                    <a href="tel:+33123456789">📞 01 23 45 67 89</a>
+                    <p style="color: #ccc; margin-top: 1rem;">🌍 Fait avec ❤️ pour les entrepreneurs</p>
+                </div>
+            </div>
+            
+            <div style="border-top: 1px solid #444; padding-top: 2rem; margin-top: 2rem;">
+                <p>&copy; 2024 Africom - La plateforme e-commerce qui grandit avec vous</p>
+            </div>
         </div>
     </footer>
 
@@ -430,12 +627,22 @@
         });
 
         // Fonctions interactives
-        function showAlert(message) {
-            alert('🎉 ' + message + '\n\nCette fonctionnalité sera bientôt disponible!\n\nVous créez votre propre SaaS ! 💪');
+        function showSignupForm() {
+            alert('🎉 Bienvenue sur Africom !\n\nVotre formulaire d\'inscription sera bientôt prêt.\n\n✅ Prochaine étape : Système d\'inscription complet\n💰 Objectif : 3000-5000€/mois de revenus !\n\nVous construisez votre liberté financière ! 🚀');
+        }
+
+        function selectPlan(plan) {
+            const plans = {
+                'starter': 'Plan Starter (0€/mois)',
+                'business': 'Plan Business (29€/mois)',
+                'enterprise': 'Plan Enterprise (99€/mois)'
+            };
+            
+            alert(`✅ ${plans[plan]} sélectionné !\n\n🔥 Bientôt disponible avec :\n• Dashboard utilisateur\n• Système de paiement Stripe\n• Création de boutiques\n\nVotre SaaS prend forme ! 💪`);
         }
 
         function showDemo() {
-            alert('🎬 Démonstration vidéo\n\nIci sera intégrée une vidéo de démonstration de votre builder e-commerce!\n\nVous êtes en train de créer le futur de l\'e-commerce ! 🚀');
+            alert('🎬 Démonstration Africom\n\nIci sera intégrée votre démo interactive !\n\nProchaines étapes :\n✅ Builder de sites fonctionnel\n✅ Templates personnalisables\n✅ Système de génération automatique\n\nDirection : 5000€/mois ! 🎯');
         }
 
         // Animation au scroll
@@ -455,7 +662,7 @@
 
         // Observer tous les éléments animables
         document.addEventListener('DOMContentLoaded', function() {
-            const animatedElements = document.querySelectorAll('.feature-card, .pricing-card');
+            const animatedElements = document.querySelectorAll('.feature-card, .pricing-card, .market-stat');
             animatedElements.forEach(el => {
                 el.style.opacity = '0';
                 el.style.transform = 'translateY(30px)';
@@ -476,6 +683,19 @@
                     });
                 }
             });
+        });
+
+        // Tracking basique des clics
+        function trackUserAction(action) {
+            console.log(`Action utilisateur: ${action} - ${new Date().toISOString()}`);
+            // Ici vous pourrez ajouter Google Analytics plus tard
+        }
+
+        // Track les clics sur les boutons importants
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-primary')) {
+                trackUserAction('CTA_Click');
+            }
         });
     </script>
 </body>
