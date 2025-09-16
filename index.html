@@ -24,6 +24,10 @@
             --shadow-hover: rgba(37, 99, 235, 0.25);
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
@@ -388,7 +392,7 @@
             background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
         }
 
-        .feature-card:hover {
+        .feature-card:hover{
             transform: translateY(-10px);
             box-shadow: 0 20px 40px var(--shadow-hover);
         }
@@ -735,7 +739,7 @@
             <button id="menuBtn" onclick="toggleMenu()">☰ Menu</button>
             <!-- Menu mobile (liste déroulante) -->
             <div id="menuMobile" style="display:none; margin-top:10px;">
-                <select onchange="window.location.href=this.value">
+                <select id="menuSelect">
                     <option value="">Choisir une page</option>
                     <option value="#features">Fonctionnalités</option>
                     <option value="#pricing">Tarifs</option>
@@ -882,3 +886,163 @@
                 
                 <div class="pricing-card">
                     <h3>Enterprise</h3>
+                    <div class="price">99€<span class="price-period">/mois</span></div>
+                    <p class="price-subtitle">Pour agences & grandes entreprises</p>
+                    <ul>
+                        <li>✅ Boutiques illimitées</li>
+                        <li>✅ White-label complet</li>
+                        <li>✅ API personnalisée</li>
+                        <li>✅ Manager dédié</li>
+                        <li>✅ Formation équipe</li>
+                        <li>✅ SLA garantie</li>
+                    </ul>
+                    <a href="#" class="btn-primary cta-enhanced" onclick="selectPlan('enterprise')">Contact Commercial</a>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 3rem; color: var(--text-light);">
+                <p>💳 <strong>Pas de frais cachés</strong> • 🔒 <strong>Annulation à tout moment</strong> • 🎯 <strong>Support inclus</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="contact">
+        <div class="footer-content">
+            <div class="footer-links">
+                <div class="footer-section">
+                    <h4>Produit</h4>
+                    <a href="#">Fonctionnalités</a>
+                    <a href="#">Templates</a>
+                    <a href="#">Intégrations</a>
+                    <a href="#">API</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Support</h4>
+                    <a href="#">Centre d'aide</a>
+                    <a href="#">Tutoriels</a>
+                    <a href="#">Communauté</a>
+                    <a href="#">Status</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Entreprise</h4>
+                    <a href="#" id="about">À propos</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Carrières</a>
+                    <a href="#">Presse</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <a href="mailto:hello@africom.com">📧 hello@africom.com</a>
+                    <a href="tel:+33123456789">📞 01 23 45 67 89</a>
+                    <p style="color: #ccc; margin-top: 1rem;">🌍 Fait avec ❤️ pour les entrepreneurs</p>
+                </div>
+            </div>
+            
+            <div style="border-top: 1px solid #444; padding-top: 2rem; margin-top: 2rem;">
+                <p>&copy; 2024 Africom - La plateforme e-commerce qui grandit avec vous</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Progress Bar au scroll
+        window.addEventListener('scroll', function() {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = (scrollTop / scrollHeight) * 100;
+            document.getElementById('progressBar').style.width = scrollPercent + '%';
+        });
+
+        // Fonctions interactives
+        function showSignupForm() {
+            alert('🎉 Bienvenue sur Africom !\n\nVotre formulaire d\'inscription sera bientôt prêt.\n\n✅ Prochaine étape : Système d\'inscription complet\n💰 Objectif : 3000-5000€/mois de revenus !\n\nVous construisez votre liberté financière ! 🚀');
+        }
+
+        function selectPlan(plan) {
+            const plans = {
+                'starter': 'Plan Starter (0€/mois)',
+                'business': 'Plan Business (29€/mois)',
+                'enterprise': 'Plan Enterprise (99€/mois)'
+            };
+            
+            alert(`✅ ${plans[plan]} sélectionné !\n\n🔥 Bientôt disponible avec :\n• Dashboard utilisateur\n• Système de paiement Stripe\n• Création de boutiques\n\nVotre SaaS prend forme ! 💪`);
+        }
+
+        function showDemo() {
+            alert('🎬 Démonstration Africom\n\nIci sera intégrée votre démo interactive !\n\nProchaines étapes :\n✅ Builder de sites fonctionnel\n✅ Templates personnalisables\n✅ Système de génération automatique\n\nDirection : 5000€/mois ! 🎯');
+        }
+
+        // Fonction menu mobile avec amélioration
+        function toggleMenu() {
+            const menu = document.getElementById("menuMobile");
+            menu.style.display = (menu.style.display === "block") ? "none" : "block";
+        }
+
+        // Smooth scroll + fermeture menu mobile
+        document.getElementById("menuSelect").addEventListener("change", function() {
+            const target = this.value;
+            if (target) {
+                document.querySelector(target).scrollIntoView({ 
+                    behavior: "smooth" 
+                });
+                document.getElementById("menuMobile").style.display = "none"; // ferme le menu
+                this.value = ""; // reset le select
+            }
+        });
+
+        // Animation au scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observer tous les éléments animables
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.feature-card, .pricing-card, .market-stat');
+            animatedElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+        });
+
+        // Smooth scroll pour les liens de navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Tracking basique des clics
+        function trackUserAction(action) {
+            console.log(`Action utilisateur: ${action} - ${new Date().toISOString()}`);
+            // Ici vous pourrez ajouter Google Analytics plus tard
+        }
+
+        // Track les clics sur les boutons importants
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('btn-primary')) {
+                trackUserAction('CTA_Click');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -24,6 +24,10 @@
             --shadow-hover: rgba(37, 99, 235, 0.25);
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
@@ -735,7 +739,7 @@
             <button id="menuBtn" onclick="toggleMenu()">☰ Menu</button>
             <!-- Menu mobile (liste déroulante) -->
             <div id="menuMobile" style="display:none; margin-top:10px;">
-                <select onchange="window.location.href=this.value">
+                <select id="menuSelect">
                     <option value="">Choisir une page</option>
                     <option value="#features">Fonctionnalités</option>
                     <option value="#pricing">Tarifs</option>
@@ -882,4 +886,3 @@
                 
                 <div class="pricing-card">
                     <h3>Enterprise</h3>
-                    
