@@ -750,113 +750,303 @@
     </div>
 
     <script>
-        // === VARIABLES GLOBALES ===
-        let currentStep = 1;
-        const totalSteps = 3;
-        const formData = {}; // Stockage des données entre étapes
+// === VARIABLES GLOBALES ===
+let currentStep = 1;
+const totalSteps = 3;
+const formData = {};
 
-        // Éléments DOM principaux
-        const form = document.getElementById('multiStepForm');
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
-        const nextBtnText = document.getElementById('nextBtnText');
-        const progressFill = document.getElementById('progressFill');
-        const loadingSpinner = document.getElementById('loadingSpinner');
+// Éléments DOM
+const form = document.getElementById('multiStepForm');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const nextBtnText = document.getElementById('nextBtnText');
+const progressFill = document.getElementById('progressFill');
+const loadingSpinner = document.getElementById('loadingSpinner');
 
-        // === INITIALISATION ===
-        document.addEventListener('DOMContentLoaded', function() {
-            initializePlan();
-            setupEventListeners();
-            updateUI();
+// === INITIALISATION ===
+document.addEventListener('DOMContentLoaded', function() {
+    initializePlan();
+    setupEventListeners();
+    updateUI();
+});
+
+function initializePlan() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const plan = urlParams.get('plan');
+    
+    if (plan && ['starter', 'business', 'enterprise'].includes(plan.toLowerCase())) {
+        document.getElementById('plan').value = plan.toLowerCase();
+        const planBadge = document.getElementById('planBadge');
+        const planNames = {
+            'starter': 'Plan Starter (0€/mois)',
+            'business': 'Plan Business (29€/mois)', 
+            'enterprise': 'Plan Enterprise (99€/mois)'
+        };
+        planBadge.textContent = `Plan choisi: ${planNames[plan.toLowerCase()]}`;
+        planBadge.classList.add('show');
+    }
+}
+
+function setupEventListeners() {
+    nextBtn.addEventListener('click', handleNext);
+    prevBtn.addEventListener('click', handlePrevious);
+    
+    document.querySelectorAll('.form-input, .form-select').forEach(input => {
+        input.addEventListener('blur', validateField);
+        input.addEventListener('input', function() {
+            clearError(this);
+            if (this.id === 'password') checkPasswordStrength();
+            if (this.id === 'confirmPassword') validatePasswordMatch();
         });
+    });
 
-        // === GESTION DU PLAN DEPUIS L'URL ===
-        function initializePlan() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const plan = urlParams.get('plan');
-            
-            if (plan && ['starter', 'business', 'enterprise'].includes(plan.toLowerCase())) {
-                const planField = document.getElementById('plan');
-                const planBadge = document.getElementById('planBadge');
-                
-                planField.value = plan.toLowerCase();
-                
-                // Affichage du badge avec nom du plan
-                const planNames = {
-                    'starter': 'Plan Starter (0€/mois)',
-                    'business': 'Plan Business (29€/mois)', 
-                    'enterprise': 'Plan Enterprise (99€/mois)'
-                };
-                
-                planBadge.textContent = `Plan choisi: ${planNames[plan.toLowerCase()]}`;
-                planBadge.classList.add('show');
-            }
+    document.getElementById('country').addEventListener('change', updateCountryCode);
+    document.getElementById('passwordToggle').addEventListener('click', () => togglePassword('password'));
+    document.getElementById('confirmPasswordToggle').addEventListener('click', () => togglePassword('confirmPassword'));
+    form.addEventListener('submit', (e) => e.preventDefault());
+}
+
+async function handleNext() {
+    if (currentStep <= totalSteps) {
+        const isValid = validateCurrentStep();
+        
+        if (!isValid) {
+            const firstError = document.querySelector(`#step${currentStep} .form-input.error, #step${currentStep} .form-select.error`);
+            if (firstError) firstError.focus();
+            return;
         }
 
-        // === CONFIGURATION DES ÉVÉNEMENTS ===
-        function setupEventListeners() {
-            // Navigation entre étapes
-            nextBtn.addEventListener('click', handleNext);
-            prevBtn.addEventListener('click', handlePrevious);
+        saveCurrentStepData();
 
-            // Validation temps réel sur tous les champs
-            document.querySelectorAll('.form-input, .form-select').forEach(input => {
-                input.addEventListener('blur', validateField);
-                input.addEventListener('input', function() {
-                    clearError(this);
-                    
-                    // Vérifications spécifiques par champ
-                    if (this.id === 'password') {
-                        checkPasswordStrength();
-                    }
-                    if (this.id === 'confirmPassword') {
-                        validatePasswordMatch();
-                    }
-                });
-            });
-
-            // Mise à jour automatique du code pays
-            document.getElementById('country').addEventListener('change', updateCountryCode);
-
-            // Toggle visibilité mots de passe
-            document.getElementById('passwordToggle').addEventListener('click', () => togglePassword('password'));
-            document.getElementById('confirmPasswordToggle').addEventListener('click', () => togglePassword('confirmPassword'));
-
-            // Empêcher la soumission par défaut
-            form.addEventListener('submit', (e) => e.preventDefault());
-
-            // Support clavier (Enter pour continuer)
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey) {
-                    const activeElement = document.activeElement;
-                    if (activeElement && (activeElement.classList.contains('form-input') || activeElement.classList.contains('form-select'))) {
-                        e.preventDefault();
-                        handleNext();
-                    }
-                }
-            });
+        if (currentStep === totalSteps) {
+            await submitForm();
+        } else {
+            currentStep++;
+            updateUI();
         }
+    }
+}
 
-        // === NAVIGATION - ÉTAPE SUIVANTE ===
-        async function handleNext() {
-            if (currentStep <= totalSteps) {
-                // Validation de l'étape courante
-                const isValid = validateCurrentStep();
-                
-                if (!isValid) {
-                    // Focus sur le premier champ en erreur
-                    const firstError = document.querySelector(`#step${currentStep} .form-input.error, #step${currentStep} .form-select.error`);
-                    if (firstError) {
-                        firstError.focus();
-                    }
-                    return;
-                }
+function handlePrevious() {
+    if (currentStep > 1) {
+        currentStep--;
+        updateUI();
+    }
+}
 
-                // Sauvegarde des données de l'étape
-                saveCurrentStepData();
+function validateCurrentStep() {
+    let isValid = true;
 
-                if (currentStep === totalSteps) {
-                    // Dernière étape - soumission du formulaire
-                    await submitForm();
-                } else {
-                    // Passage à l'étape
+    switch (currentStep) {
+        case 1:
+            isValid = validateField({target: document.getElementById('firstName')}) && isValid;
+            isValid = validateField({target: document.getElementById('lastName')}) && isValid;
+            isValid = validateField({target: document.getElementById('email')}) && isValid;
+            break;
+        case 2:
+            isValid = validateField({target: document.getElementById('country')}) && isValid;
+            isValid = validateField({target: document.getElementById('phone')}) && isValid;
+            break;
+        case 3:
+            isValid = validateField({target: document.getElementById('password')}) && isValid;
+            isValid = validateField({target: document.getElementById('confirmPassword')}) && isValid;
+            break;
+    }
+
+    return isValid;
+}
+
+function validateField(e) {
+    const field = e.target;
+    const value = field.value.trim();
+    let isValid = true;
+    let message = '';
+
+    switch (field.id) {
+        case 'firstName':
+        case 'lastName':
+            isValid = value.length >= 2;
+            message = `Veuillez saisir un ${field.id === 'firstName' ? 'prénom' : 'nom'} valide`;
+            break;
+        case 'email':
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            isValid = emailRegex.test(value);
+            message = 'Veuillez saisir une adresse e-mail valide';
+            break;
+        case 'country':
+            isValid = value !== '';
+            message = 'Veuillez sélectionner votre pays';
+            break;
+        case 'phone':
+            const cleaned = value.replace(/\D/g, '');
+            isValid = /^\d{6,15}$/.test(cleaned);
+            message = 'Veuillez saisir un numéro de téléphone valide (6-15 chiffres)';
+            break;
+        case 'password':
+            isValid = value.length >= 8;
+            message = 'Le code secret doit contenir au moins 8 caractères';
+            break;
+        case 'confirmPassword':
+            const password = document.getElementById('password').value;
+            isValid = value === password && value.length > 0;
+            message = 'Les codes secrets ne correspondent pas';
+            break;
+    }
+
+    showError(field, isValid, message);
+    return isValid;
+}
+
+function showError(field, isValid, message) {
+    const errorElement = document.getElementById(field.id + 'Error');
+    
+    if (isValid) {
+        field.classList.remove('error');
+        errorElement.classList.remove('show');
+    } else {
+        field.classList.add('error');
+        errorElement.textContent = message;
+        errorElement.classList.add('show');
+    }
+}
+
+function clearError(field) {
+    field.classList.remove('error');
+    const errorElement = document.getElementById(field.id + 'Error');
+    errorElement.classList.remove('show');
+}
+
+function updateUI() {
+    // Mise à jour des étapes
+    document.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
+    document.getElementById(`step${currentStep}`).classList.add('active');
+
+    // Barre de progression
+    const progress = (currentStep / totalSteps) * 100;
+    progressFill.style.width = `${progress}%`;
+
+    // Cercles d'étapes
+    for (let i = 1; i <= totalSteps; i++) {
+        const circle = document.getElementById(`step${i}Circle`);
+        const label = circle.nextElementSibling;
+        
+        if (i < currentStep) {
+            circle.classList.add('completed');
+            circle.classList.remove('active');
+            label.classList.remove('active');
+        } else if (i === currentStep) {
+            circle.classList.add('active');
+            circle.classList.remove('completed');
+            label.classList.add('active');
+        } else {
+            circle.classList.remove('active', 'completed');
+            label.classList.remove('active');
+        }
+    }
+
+    // Boutons
+    prevBtn.style.display = currentStep > 1 ? 'block' : 'none';
+    nextBtnText.textContent = currentStep === totalSteps ? "S'inscrire" : 'Continuer →';
+
+    // Focus
+    setTimeout(() => {
+        const firstInput = document.querySelector(`#step${currentStep} .form-input, #step${currentStep} .form-select`);
+        if (firstInput) firstInput.focus();
+    }, 100);
+}
+
+function saveCurrentStepData() {
+    const currentStepElement = document.getElementById(`step${currentStep}`);
+    const inputs = currentStepElement.querySelectorAll('.form-input, .form-select');
+    
+    inputs.forEach(input => {
+        if (input.id) {
+            formData[input.id] = input.value;
+        }
+    });
+}
+
+function updateCountryCode() {
+    const select = document.getElementById('country');
+    const option = select.options[select.selectedIndex];
+    const code = option?.dataset?.code || '';
+    document.getElementById('countryCode').value = code;
+}
+
+function checkPasswordStrength() {
+    const password = document.getElementById('password').value || '';
+    const bars = document.querySelectorAll('#passwordStrength .strength-bar');
+    const text = document.getElementById('strengthText');
+
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[\W_]/.test(password)) score++;
+
+    bars.forEach((bar, index) => {
+        bar.classList.remove('weak', 'medium', 'strong');
+        if (index < score) {
+            if (score <= 1) bar.classList.add('weak');
+            else if (score === 2) bar.classList.add('medium');
+            else bar.classList.add('strong');
+        }
+    });
+
+    let strengthText = 'Saisissez votre code secret';
+    if (password.length > 0) {
+        if (score <= 1) strengthText = 'Trop faible';
+        else if (score === 2) strengthText = 'Moyen';
+        else strengthText = 'Fort';
+    }
+
+    text.textContent = strengthText;
+}
+
+function validatePasswordMatch() {
+    const password = document.getElementById('password');
+    const confirmPassword = document.getElementById('confirmPassword');
+    const isMatch = password.value === confirmPassword.value && password.value.length > 0;
+    showError(confirmPassword, isMatch, 'Les codes secrets ne correspondent pas');
+    return isMatch;
+}
+
+function togglePassword(fieldId) {
+    const field = document.getElementById(fieldId);
+    const toggle = document.getElementById(fieldId + 'Toggle');
+    
+    if (field.type === 'password') {
+        field.type = 'text';
+        toggle.textContent = '🙈';
+    } else {
+        field.type = 'password';
+        toggle.textContent = '👁️';
+    }
+}
+
+async function submitForm() {
+    nextBtn.disabled = true;
+    loadingSpinner.classList.add('show');
+    nextBtnText.textContent = 'Création...';
+
+    try {
+        // Simulation (remplace par vraie API)
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Succès
+        document.getElementById('successStep').classList.add('active');
+        document.getElementById('stepNavigation').style.display = 'none';
+        
+        setTimeout(() => {
+            // window.location.href = '/dashboard';
+            alert('Redirection vers dashboard...');
+        }, 2000);
+
+    } catch (error) {
+        alert('Erreur lors de l\'inscription');
+        nextBtn.disabled = false;
+        loadingSpinner.classList.remove('show');
+        nextBtnText.textContent = "S'inscrire";
+    }
+}
+</script>
