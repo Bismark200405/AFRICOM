@@ -754,6 +754,9 @@
 let currentStep = 1;
 const totalSteps = 3;
 const formData = {};
+let otpSent = false;
+let otpVerified = false;
+let resendTimer = 0;
 
 // Éléments DOM
 const form = document.getElementById('multiStepForm');
@@ -804,6 +807,10 @@ function setupEventListeners() {
     document.getElementById('passwordToggle').addEventListener('click', () => togglePassword('password'));
     document.getElementById('confirmPasswordToggle').addEventListener('click', () => togglePassword('confirmPassword'));
     form.addEventListener('submit', (e) => e.preventDefault());
+    // Gestion OTP
+document.getElementById('phone').addEventListener('input', handlePhoneInput);
+document.getElementById('otp').addEventListener('input', handleOtpInput);
+document.getElementById('resendOtp').addEventListener('click', resendOtp);
 }
 
 async function handleNext() {
@@ -844,9 +851,15 @@ function validateCurrentStep() {
             isValid = validateField({target: document.getElementById('email')}) && isValid;
             break;
         case 2:
-            isValid = validateField({target: document.getElementById('country')}) && isValid;
-            isValid = validateField({target: document.getElementById('phone')}) && isValid;
-            break;
+    isValid = validateField({target: document.getElementById('country')}) && isValid;
+    isValid = validateField({target: document.getElementById('phone')}) && isValid;
+    
+    // Vérification OTP obligatoire
+    if (otpSent && !otpVerified) {
+        showError(document.getElementById('otp'), false, 'Veuillez vérifier votre numéro avec le code OTP');
+        isValid = false;
+    }
+    break;
         case 3:
             isValid = validateField({target: document.getElementById('password')}) && isValid;
             isValid = validateField({target: document.getElementById('confirmPassword')}) && isValid;
@@ -881,6 +894,10 @@ function validateField(e) {
             const cleaned = value.replace(/\D/g, '');
             isValid = /^\d{6,15}$/.test(cleaned);
             message = 'Veuillez saisir un numéro de téléphone valide (6-15 chiffres)';
+            break;
+        case 'otp':
+            isValid = value.length === 6 && /^\d{6}$/.test(value);
+            message = 'Le code OTP doit contenir 6 chiffres';
             break;
         case 'password':
             isValid = value.length >= 8;
@@ -1047,6 +1064,109 @@ async function submitForm() {
         nextBtn.disabled = false;
         loadingSpinner.classList.remove('show');
         nextBtnText.textContent = "S'inscrire";
+    }  
+// Gestion saisie téléphone
+function handlePhoneInput() {
+    const phone = document.getElementById('phone').value.replace(/\D/g, '');
+    if (phone.length >= 8 && !otpSent) {
+        // Attendre 1 seconde après la saisie pour envoyer l'OTP
+        clearTimeout(window.phoneTimeout);
+        window.phoneTimeout = setTimeout(() => {
+            if (phone.length >= 8) sendOtp();
+        }, 1000);
     }
+}
+
+// Envoi OTP
+async function sendOtp() {
+    const phone = document.getElementById('phone').value.replace(/\D/g, '');
+    const countryCode = document.getElementById('countryCode').value;
+    const fullPhone = countryCode + phone;
+    
+    if (phone.length < 8) return;
+    
+    try {
+        // Simulation envoi SMS (remplace par vraie API)
+        console.log(`Envoi SMS OTP vers ${fullPhone}`);
+        
+        // Affichage du champ OTP
+        document.getElementById('otpContainer').style.display = 'block';
+        document.getElementById('phoneDisplay').textContent = fullPhone;
+        otpSent = true;
+        
+        // Démarrer timer de renvoi (30 secondes)
+        startResendTimer();
+        
+        alert(`Code OTP envoyé au ${fullPhone}`);
+        
+    } catch (error) {
+        console.error('Erreur envoi OTP:', error);
+    }
+}
+
+// Vérification OTP en temps réel
+function handleOtpInput() {
+    const otp = document.getElementById('otp').value;
+    if (otp.length === 6) {
+        verifyOtp(otp);
+    }
+}
+
+// Vérification OTP
+async function verifyOtp(code) {
+    try {
+        // Simulation vérification (remplace par vraie API)
+        const isValid = code === '123456'; // Code de test
+        
+        if (isValid) {
+            otpVerified = true;
+            document.getElementById('otp').classList.remove('error');
+            document.getElementById('otp').style.borderColor = 'var(--success-color)';
+            clearError(document.getElementById('otp'));
+            
+            // Animation de succès
+            document.getElementById('otpContainer').style.background = 'rgba(16, 185, 129, 0.2)';
+            
+        } else {
+            showError(document.getElementById('otp'), false, 'Code OTP incorrect');
+        }
+        
+    } catch (error) {
+        showError(document.getElementById('otp'), false, 'Erreur de vérification');
+    }
+}
+
+// Renvoi OTP
+async function resendOtp() {
+    if (resendTimer > 0) return;
+    
+    const resendBtn = document.getElementById('resendOtp');
+    resendBtn.disabled = true;
+    resendBtn.textContent = 'Envoi...';
+    
+    await sendOtp();
+    startResendTimer();
+    
+    resendBtn.disabled = false;
+    resendBtn.textContent = 'Renvoyer';
+}
+
+// Timer de renvoi
+function startResendTimer() {
+    resendTimer = 30;
+    const resendBtn = document.getElementById('resendOtp');
+    
+    const interval = setInterval(() => {
+        if (resendTimer > 0) {
+            resendBtn.textContent = `Renvoyer (${resendTimer}s)`;
+            resendBtn.disabled = true;
+            resendTimer--;
+        } else {
+            resendBtn.textContent = 'Renvoyer';
+            resendBtn.disabled = false;
+            clearInterval(interval);
+        }
+    }, 1000);
+}
 }
 </script>
