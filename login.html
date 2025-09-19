@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Africom</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* === VARIABLES CSS === */
+        :root {
+            --primary-color: #2563EB;
+            --secondary-color: #16A34A;
+            --accent-color: #FACC15;
+            --text-dark: #1E293B;
+            --text-light: #64748B;
+            --bg-light: #F8FAFC;
+            --white: #FFFFFF;
+            --error-color: #EF4444;
+            --success-color: #10B981;
+            --shadow: rgba(37, 99, 235, 0.15);
+            --shadow-hover: rgba(37, 99, 235, 0.25);
+        }
+
+        /* === RESET ET BASE === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1E40AF 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* === ANIMATIONS DE FOND === */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><circle cx="200" cy="200" r="100" fill="rgba(255,255,255,0.05)"/><circle cx="800" cy="300" r="150" fill="rgba(255,255,255,0.03)"/><circle cx="300" cy="700" r="120" fill="rgba(255,255,255,0.04)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes float { 0%,100%{transform:translateY(0) rotate(0)} 50%{transform:translateY(-20px) rotate(180deg)} }
+        @keyframes slideUp { from {opacity:0; transform:translateY(40px)} to {opacity:1; transform:translateY(0)} }
+        @keyframes slideDown { from {opacity:0; transform:translateY(-10px)} to {opacity:1; transform:translateY(0)} }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* === TYPOGRAPHIE === */
+        h1,h2,h3,.btn-primary,.btn-secondary { font-family:'Poppins',sans-serif; }
+
+        /* === CONTAINER PRINCIPAL === */
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            animation: slideUp 0.8s ease;
+            overflow: hidden;
+        }
+
+        /* === HEADER === */
+        .login-header {
+            background: var(--white);
+            padding: 3rem 3rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid #F1F5F9;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .logo::before {
+            content: "🌍";
+            margin-right: 0.5rem;
+        }
+
+        .welcome-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .welcome-subtitle {
+            color: var(--text-light);
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        /* === CONTENU DU FORMULAIRE === */
+        .login-content {
+            padding: 2rem 3rem 3rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        /* === CHAMPS DE FORMULAIRE === */
+        .form-label {
+            font-weight: 500;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            display: block;
+            font-size: 0.9rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: var(--white);
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-input:valid:not(:placeholder-shown) {
+            border-color: var(--success-color);
+        }
+
+        .form-input.error {
+            border-color: var(--error-color);
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+
+        /* === CONTAINER MOT DE PASSE AVEC TOGGLE === */
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        /* === MESSAGES D'ERREUR === */
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* === INDICATEUR & TOGGLE DE TYPE DE LOGIN === */
+        .input-type-indicator {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            color: var(--text-light);
+            background: var(--bg-light);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            font-weight: 500;
+        }
+
+        .login-field-container {
+            position: relative;
+        }
+
+        /* Toggle small buttons (Email / Téléphone) */
+        .login-toggle {
+            display: flex;
+            gap: 0.4rem;
+            margin-bottom: 0.6rem;
+            justify-content: center;
+        }
+
+        .small-toggle {
+            padding: 0.35rem 0.7rem;
+            font-size: 0.85rem;
+            border-radius: 8px;
+            border: 1px solid #E5E7EB;
+            background: var(--white);
+            cursor: pointer;
+        }
+
+        .small-toggle.active {
+            background: linear-gradient(90deg, rgba(37,99,235,0.12), rgba(37,99,235,0.06));
+            border-color: rgba(37,99,235,0.3);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* === BOUTONS === */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #1E40AF 100%);
+            color: var(--white);
+            padding: 1rem 1.5rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* === LOADING SPINNER === */
+        .loading {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: var(--white);
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 0.5rem;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        /* === LIENS === */
+        .forgot-password {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .forgot-password a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            color: #1E40AF;
+            text-decoration: underline;
+        }
+
+        /* === SÉPARATEUR === */
+        .divider {
+            position: relative;
+            text-align: center;
+            margin: 2rem 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #E5E7EB;
+            z-index: 1;
+        }
+
+        .divider span {
+            background: var(--white);
+            padding: 0 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* === LIEN D'INSCRIPTION === */
+        .signup-link {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .signup-link a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .signup-link a:hover {
+            color: #1E40AF;
+            text-decoration: underline;
+        }
+
+        /* === ÉTAT DE SUCCÈS === */
+        .success-message {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success-color);
+            color: var(--success-color);
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-weight: 500;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        /* === CARACTÉRISTIQUES DU CHAMP LOGIN INTELLIGENT === */
+        .smart-input-info {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+            text-align: center;
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 640px) {
+            .login-container {
+                margin: 1rem;
+                max-width: none;
+            }
+
+            .login-header, .login-content {
+                padding-left: 2rem;
+                padding-right: 2rem;
+            }
+
+            .logo {
+                font-size: 1.6rem;
+            }
+
+            .welcome-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* === ANIMATION POUR INDICATEUR DE CONNEXION === */
+        .connection-status {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--success-color);
+            color: var(--white);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .connection-status.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .connection-status.error {
+            background: var(--error-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- 
+    PAGE DE CONNEXION AFRICOM
+    -->
+    
+    <div class="login-container">
+        <!-- Header -->
+        <div class="login-header">
+            <div class="logo">Africom</div>
+            <h1 class="welcome-title">Bon retour !</h1>
+            <p class="welcome-subtitle">Connectez-vous à votre compte pour accéder à votre espace</p>
+        </div>
+
+        <!-- Contenu du formulaire -->
+        <div class="login-content">
+            <!-- Message de succès -->
+            <div class="success-message" id="successMessage">
+                ✓ Connexion réussie ! Redirection en cours...
+            </div>
+
+            <form id="loginForm" novalidate>
+                <!-- Champ intelligent Email/Téléphone -->
+                <div class="form-group">
+                    <label class="form-label" for="loginField">Email ou numéro de téléphone *</label>
+                    <div class="login-field-container">
+                        <!-- Toggle Email / Téléphone -->
+                        <div class="login-toggle" aria-hidden="false">
+                            <button type="button" id="emailToggle" class="small-toggle active">Email</button>
+                            <button type="button" id="phoneToggle" class="small-toggle">Téléphone</button>
+                        </div>
+
+                        <!-- Email input (par défaut visible) -->
+                        <input 
+                            type="email" 
+                            id="loginEmail" 
+                            name="loginEmail" 
+                            class="form-input" 
+                            placeholder="ex: jean@gmail.com" 
+                            autocomplete="username"
+                            required
+                        >
+
+                        <!-- Phone input (caché par défaut) -->
+                        <input 
+                            type="tel" 
+                            id="loginPhone" 
+                            name="loginPhone" 
+                            class="form-input hidden" 
+                            placeholder="ex: +22893675908" 
+                            inputmode="tel"
+                            autocomplete="tel"
+                        >
+
+                        <div class="input-type-indicator" id="inputTypeIndicator">Email</div>
+                    </div>
+                    <div class="smart-input-info">
+                        Saisissez votre adresse email ou votre numéro de téléphone
+                    </div>
+                    <div class="error-message" id="loginEmailError" role="alert" aria-live="polite"></div>
+                    <div class="error-message" id="loginPhoneError" role="alert" aria-live="polite"></div>
+                </div>
+
+                <!-- Mot de passe -->
+                <div class="form-group">
+                    <label class="form-label" for="password">Code secret *</label>
+                    <div class="password-container">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="Saisissez votre code secret" 
+                            autocomplete="current-password"
+                            required
+                        >
+                        <button type="button" class="password-toggle" id="passwordToggle" aria-label="Afficher le mot de passe">
+                            👁️
+                        </button>
+                    </div>
+                    <div class="error-message" id="passwordError" role="alert" aria-live="polite"></div>
+                </div>
+
+                <!-- Bouton de connexion -->
+                <button type="submit" class="btn-primary" id="loginBtn">
+                    <div class="loading" id="loadingSpinner"></div>
+                    <span id="loginBtnText">Se connecter</span>
+                </button>
+
+                <!-- Mot de passe oublié -->
+                <div class="forgot-password">
+                    <a href="#" id="forgotPasswordLink">Mot de passe oublié ?</a>
+                </div>
+            </form>
+
+            <!-- Séparateur -->
+            <div class="divider">
+                <span>ou</span>
+            </div>
+
+            <!-- Lien d'inscription -->
+            <div class="signup-link">
+                Pas encore de compte ? <a href="signup.html">Créer un compte</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Indicateur de statut de connexion -->
+    <div class="connection-status" id="connectionStatus"></div>
+
+    <script>
+    /**
+     * Modifications :
+     * - Toggle Email / Téléphone (deux inputs séparés).
+     * - En mode Téléphone, validation UEMOA stricte (indicatif + longueur locale selon phoneRules).
+     * - Les fonctions de validation utilisent l'input actif.
+     */
+
+    // === VARIABLES GLOBALES ===
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginBtnText = document.getElementById('loginBtnText');
+    const loadingSpinner = document.getElementById('loadingSpinner');
+    const loginEmail = document.getElementById('loginEmail');
+    const loginPhone = document.getElementById('loginPhone');
+    const emailToggle = document.getElementById('emailToggle');
+    const phoneToggle = document.getElementById('phoneToggle');
+    const inputTypeIndicator = document.getElementById('inputTypeIndicator');
+    const connectionStatus = document.getElementById('connectionStatus');
+    const successMessage = document.getElementById('successMessage');
+    const passwordField = document.getElementById('password');
+
+    // Règles téléphones UEMOA
+    const phoneRules = {
+        'TG': 8,  'BJ': 8,  'BF': 8,  'ML': 8,  'NE': 8,
+        'SN': 9,  'CI': 10, 'GW': 9
+    };
+
+    // Mapping indicatifs -> codes pays (UEMOA + quelques autres si besoin)
+    const countryCodeMap = {
+        '+228': 'TG', '+229': 'BJ', '+226': 'BF', '+223': 'ML',
+        '+227': 'NE', '+221': 'SN', '+225': 'CI', '+245': 'GW',
+        // non-UEMOA kept for detection but will be rejected in strict phone mode
+        '+33': 'FR', '+32': 'BE', '+41': 'CH', '+1': 'CA',
+        '+212': 'MA', '+216': 'TN', '+213': 'DZ'
+    };
+
+    // COMPTES DE TEST
+    const testAccounts = [
+        {
+            email: 'admin@africom.com',
+            phone: '+221612345678', // Sénégal
+            password: 'admin123',
+            name: 'Administrateur Africom'
+        },
+        {
+            email: 'jean.dupont@gmail.com',
+            phone: '+22812345678', // Togo
+            password: 'motdepasse',
+            name: 'Jean Dupont'
+        },
+        {
+            email: 'marie.diallo@yahoo.fr',
+            phone: '+22923456789', // Bénin
+            password: 'marie2024',
+            name: 'Marie Diallo'
+        },
+        {
+            email: 'ibrahim.kone@outlook.com',
+            phone: '+22567891234', // Côte d'Ivoire
+            password: 'ibrahim123',
+            name: 'Ibrahim Koné'
+        }
+    ];
+
+    // mode actif: 'email' ou 'phone'
+    let activeMode = 'email';
+
+    // === INITIALISATION ===
+    document.addEventListener('DOMContentLoaded', function() {
+        setupEventListeners();
+
+        console.log('=== COMPTES DE TEST DISPONIBLES ===');
+        testAccounts.forEach((account, index) => {
+            console.log(`${index + 1}. Email: ${account.email}`);
+            console.log(`   Téléphone: ${account.phone}`);
+            console.log(`   Mot de passe: ${account.password}`);
+            console.log(`   Nom: ${account.name}`);
+            console.log('');
+        });
+        console.log('=====================================');
+    });
+
+    function setupEventListeners() {
+        // toggles
+        emailToggle.addEventListener('click', () => setMode('email'));
+        phoneToggle.addEventListener('click', () => setMode('phone'));
+
+        // listeners for both inputs
+        loginEmail.addEventListener('input', handleLoginFieldInput);
+        loginEmail.addEventListener('blur', validateLoginField);
+        loginPhone.addEventListener('input', handleLoginFieldInput);
+        loginPhone.addEventListener('blur', validateLoginField);
+
+        // password
+        if (passwordField) {
+            passwordField.addEventListener('blur', validatePassword);
+            passwordField.addEventListener('input', () => clearError(passwordField));
+        }
+
+        // toggle password visibility
+        const passwordToggle = document.getElementById('passwordToggle');
+        if (passwordToggle) {
+            passwordToggle.addEventListener('click', () => togglePassword('password'));
+        }
+
+        // submit
+        if (loginForm) {
+            loginForm.addEventListener('submit', handleLogin);
+        }
+
+        // forgot password
+        const forgotLink = document.getElementById('forgotPasswordLink');
+        if (forgotLink) {
+            forgotLink.addEventListener('click', handleForgotPassword);
+        }
+    }
+
+    // === MODE SWITCH ===
+    function setMode(mode) {
+        if (mode === activeMode) return;
+
+        activeMode = mode;
+
+        if (mode === 'email') {
+            emailToggle.classList.add('active');
+            phoneToggle.classList.remove('active');
+            loginEmail.classList.remove('hidden');
+            loginPhone.classList.add('hidden');
+            inputTypeIndicator.textContent = '📧 Email';
+            loginEmail.focus();
+        } else {
+            phoneToggle.classList.add('active');
+            emailToggle.classList.remove('active');
+            loginPhone.classList.remove('hidden');
+            loginEmail.classList.add('hidden');
+            inputTypeIndicator.textContent = '📱 Téléphone';
+            loginPhone.focus();
+        }
+
+        // clear previous errors on both fields
+        clearError(loginEmail);
+        clearError(loginPhone);
+    }
+
+    function getActiveLoginField() {
+        return activeMode === 'email' ? loginEmail : loginPhone;
+    }
+
+    // === GESTION DU CHAMP INTELLIGENT ===
+    function handleLoginFieldInput() {
+        const field = getActiveLoginField();
+        const value = field.value.trim();
+        clearError(field);
+
+        if (value.length === 0) {
+            updateInputTypeIndicator(activeMode === 'email' ? ' Email' : '📱 Téléphone ');
+            return;
+        }
+
+        if (activeMode === 'email') {
+            if (isValidEmail(value) || value.includes('@')) {
+                updateInputTypeIndicator(' Email');
+                field.type = 'email';
+            } else {
+                updateInputTypeIndicator('❓ Format inconnu');
+                field.type = 'text';
+            }
+        } else {
+            // phone mode -> show detected country if present
+            if (isPhoneNumber(value)) {
+                const country = getCountryFromPhone(value);
+                if (country) {
+                    updateInputTypeIndicator(`📱 ${country}`);
+                } else {
+                    updateInputTypeIndicator('📱 Téléphone');
+                }
+                field.type = 'tel';
+            } else {
+                updateInputTypeIndicator('❓ Format inconnu');
+                field.type = 'tel';
+            }
+        }
+    }
+
+    function updateInputTypeIndicator(text) {
+        if (inputTypeIndicator) {
+            inputTypeIndicator.textContent = text;
+        }
+    }
+
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function isPhoneNumber(phone) {
+        const cleaned = phone.replace(/[\s\-\(\)]/g, '');
+        return /^\+\d{10,15}$/.test(cleaned);
+    }
+
+    function getCountryFromPhone(phone) {
+        const cleaned = phone.replace(/[\s\-\(\)]/g, '');
+        for (const [code, country] of Object.entries(countryCodeMap)) {
+            if (cleaned.startsWith(code)) {
+                return country;
+            }
+        }
+        return null;
+    }
+
+    // UEMOA-specific check: returns {ok: boolean, message: ''}
+    function validatePhoneUemoa(phone) {
+        const cleaned = phone.replace(/[\s\-\(\)]/g, '');
+        if (!/^\+\d{10,15}$/.test(cleaned)) {
+            return { ok: false, message: 'Format téléphone invalide (ex: +22812345678)' };
+        }
+        const code = Object.keys(countryCodeMap).find(c => cleaned.startsWith(c));
+        if (!code) {
+            return { ok: false, message: 'Indicatif inconnu. Utilisez un indicatif UEMOA (ex: +228)' };
+        }
+        const country = countryCodeMap[code];
+        // accept only UEMOA countries in strict phone mode
+        if (!phoneRules[country]) {
+            return { ok: false, message: 'En mode téléphone, seuls les numéros UEMOA sont acceptés' };
+        }
+        const expected = phoneRules[country];
+        const localNumber = cleaned.replace(new RegExp('^\\\\+' + code.replace('+','')), ''); // fallback (unused)
+        // easier: strip leading + and code digits length
+        const codeDigits = code.replace('+','').length;
+        const local = cleaned.slice(1 + codeDigits);
+        if (local.length !== expected) {
+            return { ok: false, message: `Numéro ${country} invalide : attendu ${expected} chiffres` };
+        }
+        return { ok: true, message: '' };
+    }
+
+    // === VALIDATIONS ===
+    function validateLoginField() {
+        const field = getActiveLoginField();
+        const value = field.value.trim();
+        let isValid = false;
+        let message = '';
+
+        if (value.length === 0) {
+            message = 'Veuillez saisir votre email ou numéro de téléphone';
+        } else if (activeMode === 'email') {
+            isValid = isValidEmail(value);
+            message = isValid ? '' : 'Veuillez saisir une adresse email valide';
+        } else {
+            // phone mode -> strict UEMOA validation
+            const res = validatePhoneUemoa(value);
+            isValid = res.ok;
+            message = res.message;
+        }
+
+        showError(field, isValid, message);
+        return isValid;
+    }
+
+    function validatePassword() {
+        const value = passwordField.value.trim();
+        const isValid = value.length >= 6;
+        const message = isValid ? '' : 'Le mot de passe doit contenir au moins 6 caractères';
+        
+        showError(passwordField, isValid, message);
+        return isValid;
+    }
+
+    function showError(field, isValid, message) {
+        const errorElement = document.getElementById(field.id + 'Error');
+        if (!errorElement) return;
+        if (isValid) {
+            field.classList.remove('error');
+            errorElement.classList.remove('show');
+        } else {
+            field.classList.add('error');
+            errorElement.textContent = message;
+            errorElement.classList.add('show');
+        }
+    }
+
+    function clearError(field) {
+        field.classList.remove('error');
+        const errorElement = document.getElementById(field.id + 'Error');
+        if (errorElement) {
+            errorElement.classList.remove('show');
+        }
+    }
+
+    // === CONNEXION ===
+    async function handleLogin(e) {
+        e.preventDefault();
+
+        const isLoginValid = validateLoginField();
+        const isPasswordValid = validatePassword();
+
+        if (!isLoginValid || !isPasswordValid) {
+            const firstError = document.querySelector('.form-input.error');
+            if (firstError) firstError.focus();
+            return;
+        }
+
+        setLoginLoading(true);
+
+        try {
+            const loginValue = getActiveLoginField().value.trim();
+            const password = passwordField.value.trim();
+
+            // SIMULATION - chercher compte selon mode
+            const account = testAccounts.find(acc => {
+                if (activeMode === 'email') {
+                    return acc.email.toLowerCase() === loginValue.toLowerCase() && acc.password === password;
+                } else {
+                    return acc.phone === loginValue && acc.password === password;
+                }
+            });
+
+            if (account) {
+                showConnectionStatus(`Bienvenue ${account.name.split(' ')[0]} !`, 'success');
+                successMessage.classList.add('show');
+
+                setTimeout(() => {
+                    alert(`Redirection vers le tableau de bord de ${account.name}...`);
+                    resetForm();
+                }, 1200);
+            } else {
+                throw new Error('Identifiants incorrects');
+            }
+        } catch (error) {
+            console.error('Erreur de connexion:', error);
+            showConnectionStatus('Email/téléphone ou mot de passe incorrect', 'error');
+
+            showError(getActiveLoginField(), false, activeMode === 'email' ? 'Vérifiez votre email' : 'Vérifiez votre numéro');
+            showError(passwordField, false, 'Vérifiez votre mot de passe');
+            passwordField.focus();
+        } finally {
+            setLoginLoading(false);
+        }
+    }
+
+    function setLoginLoading(loading) {
+        if (loading) {
+            loginBtn.disabled = true;
+            loadingSpinner.classList.add('show');
+            loginBtnText.textContent = 'Connexion...';
+        } else {
+            loginBtn.disabled = false;
+            loadingSpinner.classList.remove('show');
+            loginBtnText.textContent = 'Se connecter';
+        }
+    }
+
+    function showConnectionStatus(message, type = 'success') {
+        connectionStatus.textContent = message;
+        connectionStatus.className = `connection-status show ${type === 'error' ? 'error' : ''}`;
+        setTimeout(() => {
+            connectionStatus.classList.remove('show');
+        }, 4000);
+    }
+
+    function resetForm() {
+        loginForm.reset();
+        document.querySelectorAll('.error-message.show').forEach(error => {
+            error.classList.remove('show');
+        });
+        document.querySelectorAll('.form-input.error').forEach(field => {
+            field.classList.remove('error');
+        });
+        successMessage.classList.remove('show');
+        // revenir en mode email par défaut
+        setMode('email');
+    }
+
+    // === UTILITAIRES ===
+    function togglePassword(fieldId) {
+        const field = document.getElementById(fieldId);
+        const toggle = document.getElementById(fieldId + 'Toggle');
+        
+        if (!field || !toggle) return;
+        
+        if (field.type === 'password') {
+            field.type = 'text';
+            toggle.textContent = '🙈';
+        } else {
+            field.type = 'password';
+            toggle.textContent = '👁️';
+        }
+    }
+
+    function handleForgotPassword(e) {
+        e.preventDefault();
+        const loginValue = getActiveLoginField().value.trim();
+        if (!loginValue) {
+            showConnectionStatus('Saisissez votre email ou numéro pour recevoir les instructions', 'error');
+            return;
+        }
+        if (activeMode === 'email') {
+            if (!isValidEmail(loginValue)) {
+                showError(loginEmail, false, 'Veuillez saisir une adresse email valide');
+                return;
+            }
+            showConnectionStatus('Instructions de récupération envoyées à votre email', 'success');
+        } else {
+            const res = validatePhoneUemoa(loginValue);
+            if (!res.ok) {
+                showError(loginPhone, false, res.message);
+                return;
+            }
+            showConnectionStatus('Instructions envoyées par SMS (simulé)', 'success');
+        }
+    }
+
+    </script>
+</body>
+</html>

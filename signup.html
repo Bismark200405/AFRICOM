@@ -141,6 +141,19 @@
         .otp-resend-btn:hover:not(:disabled){border-color:var(--primary-color);color:var(--primary-color)}
         .otp-resend-btn:disabled{opacity:.5;cursor:not-allowed}
 
+        /* bouton "se connecter" rapide */
+        .login-quick { text-align:center; margin-top:1rem; display:none; }
+        .login-quick .login-link-btn {
+            background: transparent;
+            border: none;
+            color: var(--primary-color);
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: underline;
+            padding: .5rem .75rem;
+            border-radius: 8px;
+        }
+
         @media (max-width:640px){
             .signup-container{margin:1rem;max-width:none}
             .progress-header,.form-content{padding-left:2rem;padding-right:2rem}
@@ -305,6 +318,14 @@
                     <button type="button" class="btn-secondary" id="prevBtn" style="display:none;">← Précédent</button>
                     <button type="button" class="btn-primary" id="nextBtn"><div class="loading" id="loadingSpinner"></div><span id="nextBtnText">Continuer →</span></button>
                 </div>
+                <!-- Place : juste après la div .step-navigation, à l'intérieur du <form>, visible uniquement à l'étape 1 -->
+<div id="loginQuick" class="login-quick" aria-hidden="true">
+  <button type="button" id="gotoLoginBtn" class="login-link-btn"
+          onclick="window.location.href='login.html'">
+    Déjà un compte ? Se connecter
+  </button>
+</div>
+
             </form>
         </div>
     </div>
@@ -316,10 +337,7 @@
      * - validation du numéro selon un mapping par pays (UEMOA précis)
      * - en appuyant sur Continuer à l'étape 2: si OTP non envoyé -> envoie OTP et bloque l'avancement jusqu'à vérification
      * - sécurisation des getElementById / listeners pour éviter les TypeError
-     *
-     * Tests recommandés:
-     * - choisir TG (+228) et entrer 8 chiffres (ex: 61234567), attendre / cliquer Continuer: OTP envoyé, téléphone affiché dans phoneDisplay.
-     * - entrer 123456 -> vérification réussie (simulation), then Continuer passe à l'étape 3.
+     * - AJOUT: bouton "Déjà un compte ? Se connecter" sous le bouton Continuer (visible uniquement à l'étape 1)
      *
      * NOTE: la vérification OTP est simulée ici (code valide = 123456). En production, remplacer sendOtp()/verifyOtp() par appels backend.
      */
@@ -334,7 +352,6 @@
     let phoneTimeout = null;
 
     // Règles de longueur des numéros *locales* (longueur sans indicatif pays)
-    // Sources: ITU / Wikipedia / docs publics (ex: Togo 8, Benin 8, Burkina 8, Mali 8, Niger 8, Senegal 9, CI 10, GW 9)
     const phoneRules = {
         'TG': 8,  // Togo
         'BJ': 8,  // Benin
@@ -344,7 +361,6 @@
         'SN': 9,  // Senegal (NN length 9)
         'CI': 10, // Côte d'Ivoire (10 since 2021)
         'GW': 9   // Guinée-Bissau (9)
-        // autres pays non listés => fallback 6..15
     };
 
     // DOM refs (récupérées au besoin)
@@ -410,6 +426,14 @@
 
         const resendBtn = document.getElementById('resendOtp');
         if (resendBtn) resendBtn.addEventListener('click', resendOtp);
+
+        // nouveau: bouton "se connecter"
+        const gotoLoginBtn = document.getElementById('gotoLoginBtn');
+        if (gotoLoginBtn) {
+            gotoLoginBtn.addEventListener('click', () => {
+                try { window.location.href = 'login.html'; } catch(e){ console.warn(e); }
+            });
+        }
     }
 
     // Empêche avancement si OTP pas envoyé/vérifié.
@@ -572,6 +596,13 @@
         if (prevBtn) prevBtn.style.display = currentStep > 1 ? 'block' : 'none';
         if (nextBtnText) nextBtnText.textContent = currentStep === totalSteps ? "S'inscrire" : 'Continuer →';
 
+        // afficher / masquer le bouton "Se connecter" rapide
+        const loginQuick = document.getElementById('loginQuick');
+        if (loginQuick) {
+            loginQuick.style.display = currentStep === 1 ? 'block' : 'none';
+            loginQuick.setAttribute('aria-hidden', currentStep === 1 ? 'false' : 'true');
+        }
+
         setTimeout(() => {
             const firstInput = document.querySelector(`#step${currentStep} .form-input, #step${currentStep} .form-select`);
             if (firstInput) firstInput.focus();
@@ -707,13 +738,12 @@
         const threshold = expected || 8; // fallback 8
         clearTimeout(phoneTimeout);
         phoneTimeout = setTimeout(()=>{
-            // on n'envoie que si le numéro a la longueur attendue
+
             if (expected) {
                 if (cleaned.length === expected && !otpSent) {
                     sendOtp();
                 }
             } else {
-                // si pas de règle, envoie si >=8 (souple)
                 if (cleaned.length >= 8 && !otpSent) sendOtp();
             }
         }, 600);
